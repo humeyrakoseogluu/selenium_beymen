@@ -12,15 +12,15 @@ public class BasePage {
         this.driver = driver;
     }
 
-    public void navigateTo(String URL){
+    public void navigateTo(String URL){ // Method to navigate to a specific URL
         driver.get(URL);
     }
 
-    public void clickToWebElement(By locator){
+    public void clickToWebElement(By locator){ // Method to click on a web element identified by a locator
         driver.findElement(locator).click();
     }
 
-    public String getTitle(){
+    public String getTitle(){// Method to get the title of the current page
         return driver.getTitle();
     }
 

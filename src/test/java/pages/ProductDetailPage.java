@@ -18,43 +18,46 @@ import java.util.Random;
 
 public class ProductDetailPage extends BasePage{
 
-    By brandName = By.className("o-productDetail__brandLink");
-    By productDetail = By.className("o-productDetail__description");
-    By productPrice = By.id("priceNew");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Elementin görünür olmasını bekle
-    By activeProductLocator = By.xpath("//span[contains(@class, 'm-variation__item') and contains(@class, '-active')]");
-    By addBasket = By.id("addBasket");
-    By basketCount = By.className("o-header__userInfo--count");
-    By cartIcon = By.className("icon-cart");
-    By variationItem = By.className("m-variation__item");
-    By productCount = By.className("o-header__userInfo--count");
+    // Locators for elements on the product detail page
+    private final By brandName = By.className("o-productDetail__brandLink");
+    private final By productDetail = By.className("o-productDetail__description");
+    private final By productPrice = By.id("priceNew");
+    private final By activeProductLocator = By.xpath("//span[contains(@class, 'm-variation__item') and contains(@class, '-active')]");
+    private final By addBasket = By.id("addBasket");
+    private final By basketCount = By.className("o-header__userInfo--count");
+    private final By cartIcon = By.className("icon-cart");
+    private final By variationItem = By.className("m-variation__item");
+    private final By productCount = By.className("o-header__userInfo--count");
+    private final WebDriverWait wait; // WebDriverWait instance for waiting for elements to become visible
 
     public ProductDetailPage(WebDriver driver) {
         super(driver);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // 10 seconds wait time for element visibility
     }
 
-    public String getProductPrice() {
-        WebElement productNewPriceElement = driver.findElement(productPrice);
-        return productNewPriceElement.getText();
+    public String getProductPrice() { // Method to get the product price from the page
+        wait.until(ExpectedConditions.visibilityOfElementLocated(productPrice));
+        return driver.findElement(productPrice).getText();
     }
 
     public String getProductInfo(){
-        // Ürün detay sayfasının yüklenmesini bekleyin
-        wait.until(ExpectedConditions.visibilityOfElementLocated(brandName));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(brandName)); // Wait for the brand name element to be visible
 
+        // Get brand name, description, and price of the product
         WebElement brandNameElement = driver.findElement(brandName);
         String brand = brandNameElement.getText();
         WebElement productDetailElement = driver.findElement(productDetail);
         String description = productDetailElement.getText();
         String price = getProductPrice();
 
+        // Format and return the product information as a string
         String productInfo = String.format("Brand: %s\nProduct: %s\n Price: %s",
                 brand, description, price);
 
         return productInfo;
     }
 
+    //write the product information to a text file
     public void writeToTxtFile(String info) {
         String idForTxtFile = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss").format(new Date());
         File file = new File("ProductInfo_" + idForTxtFile + ".txt");
@@ -67,25 +70,18 @@ public class ProductDetailPage extends BasePage{
         }
     }
 
-    public void addToCart() {
-
-            // Tüm öğeleri al
-            List<WebElement> variations = driver.findElements(variationItem);
-
-            // "disabled" olmayan öğeleri filtrele
-            List<WebElement> enabledVariations = new ArrayList<>();
-            for (WebElement variation : variations) {
+    public void addToCart() { // add a product to the cart, selecting a random variation if available
+            List<WebElement> variations = driver.findElements(variationItem);  // Find all variations of the product
+            List<WebElement> enabledVariations = new ArrayList<>();// "disabled" olmayan öğeleri filtrele
+            for (WebElement variation : variations) { // Loop through variations and add enabled ones to the list
                 if (!variation.getAttribute("class").contains("-disabled")) {
                     enabledVariations.add(variation);
                 }
             }
 
-            // Rastgele bir öğe seç
             if (!enabledVariations.isEmpty()) {
-                Random random = new Random();
+                Random random = new Random();// Rastgele bir öğe seç
                 WebElement randomVariation = enabledVariations.get(random.nextInt(enabledVariations.size()));
-
-                // Öğeye tıkla
                 randomVariation.click();
                 System.out.println("Clicked on: " + randomVariation.getText());
             } else {

@@ -16,14 +16,14 @@ public class ProductsPage extends BasePage{
         super(driver);
     }
 
-    // Yeni metot ekleniyor
+    //click a random product from the list of products
     public void clickRandomProduct() {
         List<WebElement> products = driver.findElements(productItems);
         if (!products.isEmpty()) {
             int randomIndex = new Random().nextInt(products.size());
             products.get(randomIndex).click();
         } else {
-            throw new RuntimeException("Ürün listesi boş.");
+            throw new RuntimeException("Product list is empty.");
         }
     }
 

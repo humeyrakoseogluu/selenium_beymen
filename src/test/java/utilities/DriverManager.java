@@ -10,15 +10,15 @@ public class DriverManager {
     public static  WebDriver getDriver() {
         if (driver == null) {
             WebDriverManager.chromedriver().setup();
-            driver = new ChromeDriver();
+            driver = new ChromeDriver();// Initialize the WebDriver with ChromeDriver
         }
         return driver;
     }
 
-    // public static void closeDriver() {
-    //     if (driver != null) {
-    //         driver.quit();
-    //         driver = null;
-    //     }
-    // }
-}//
+    public static void closeDriver() {
+        if (driver != null) {
+            driver.quit();// Close the browser and clean up the WebDriver
+            driver = null;
+        }
+    }
+}

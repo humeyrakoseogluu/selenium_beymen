@@ -41,7 +41,7 @@ public class BeymenTestStepDefinitons {
         excelReader = new ExcelReader();
     }
 
-    private void initializePages() {
+    private void initializePages() {// Method to initialize page objects
         homePage = new HomePage(driver);
         productsPage = new ProductsPage(driver);
         detailPage = new ProductDetailPage(driver);
@@ -51,7 +51,7 @@ public class BeymenTestStepDefinitons {
     @Given("go to Beymen website")
     public void go_to_beymen_website() {
         driver.get(BASE_URL);
-        homePage.closeModals();
+        homePage.closeModals();// Close any modals if present
     }
 
     @Then("verify that is home website")
@@ -61,7 +61,7 @@ public class BeymenTestStepDefinitons {
 
     @When("search for sort word")
     public void search_for_sort_word() throws InterruptedException {
-        String shorts = excelReader.searchFromExcel(filePath,0,0,0);
+        String shorts = excelReader.searchFromExcel(filePath,0,0,0);// Read "sort" from Excel
         System.out.println(shorts);
         homePage.enterSearchInput(shorts);
     }
@@ -76,7 +76,7 @@ public class BeymenTestStepDefinitons {
     @When("search and enter for gomlek word")
     public void search_for_shirts() throws InterruptedException {
         Thread.sleep(2000);
-        String shirts = excelReader.searchFromExcel(filePath, 0, 0, 1);
+        String shirts = excelReader.searchFromExcel(filePath, 0, 0, 1);// Read "gomlek" from Excel
         System.out.println(shirts);
         homePage.getResult(shirts);
     }
@@ -110,10 +110,10 @@ public class BeymenTestStepDefinitons {
 
      @When("increase the quantity to 2")
      public void increase_the_quantity_to() throws InterruptedException {
+        Thread.sleep(2000);// Wait for 2 seconds
+        driver.navigate().back();
         Thread.sleep(2000);
-         driver.navigate().back();
-         Thread.sleep(2000);
-         add_this_selected_product_to_the_cart();
+        add_this_selected_product_to_the_cart();
      }
 
     @Then("verify that the quantity")
@@ -122,15 +122,15 @@ public class BeymenTestStepDefinitons {
         softAssert.assertEquals(cartCount, 2, "The product count in cart does not match the count increased");
 
     }
- //   @When("remove the product from the cart")
- //   public void remove_the_product_from_the_cart() {
- //       // Write code here that turns the phrase above into concrete actions
- //       throw new io.cucumber.java.PendingException();
- //   }
- //   @Then("verify that the cart is empty")
- //   public void verify_that_the_cart_is_empty() {
- //       // Write code here that turns the phrase above into concrete actions
- //       throw new io.cucumber.java.PendingException();
- //   }
-//
+    @When("remove the product from the cart")
+    public void remove_the_product_from_the_cart() {
+         cartPage.removeProductFromCart();
+    }
+    @Then("verify that the cart is empty")
+    public void verify_that_the_cart_is_empty() {
+         boolean isCartEmpty = cartPage.isCartEmpty();
+         softAssert.assertTrue(isCartEmpty, "The cart is not empty after removing the product");
+         softAssert.assertAll();// Trigger the soft assert validation
+    }
+
 }

@@ -13,20 +13,22 @@ import java.util.Set;
 
 public class HomePage extends BasePage{
 
+    // Locators for elements on the homepage
     private final By searchBoxLocator = By.className("o-header__search--input");
     private final By clearSearchBox = By.className("o-header__search--close");
     private final By rejectCookiesModal = By.id("onetrust-reject-all-handler");
     private final By closeGenderModal = By.className("o-modal__closeButton");
     private final By input = By.id("o-searchSuggestion__input");
 
-    WebDriverWait wait; // Elementin görünür olmasını bekle
+    WebDriverWait wait; // Wait for elements to be visible or clickable
 
     public HomePage(WebDriver driver) {
         super(driver);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public void enterSearchInput(String searchText) throws InterruptedException {
+     // enter a search term into the search box
+    public void enterSearchInput(String searchText){
         wait.until(ExpectedConditions.visibilityOfElementLocated(searchBoxLocator));
         WebElement searchInput = driver.findElement(searchBoxLocator);
         searchInput.sendKeys(searchText);
@@ -39,20 +41,31 @@ public class HomePage extends BasePage{
     }
 
     public void deleteSearchInput() {
-        clickToWebElement(clearSearchBox);
-        //WebElement searchInput = driver.findElement(searchBoxLocator);
-        //searchInput.sendKeys(Keys.DELETE);
+        if (isElementPresent(clearSearchBox)) {
+            clickToWebElement(clearSearchBox);
+        }
     }
-
 
     public void closeModals() {
-        //windowsHandle
-        wait.until(ExpectedConditions.visibilityOfElementLocated(rejectCookiesModal));
-        clickToWebElement(rejectCookiesModal);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(closeGenderModal));
-        clickToWebElement(closeGenderModal);
-
+        if (isElementPresent(rejectCookiesModal)) {
+            clickToWebElement(rejectCookiesModal);
+        }
+        if (isElementPresent(closeGenderModal)) {
+            clickToWebElement(closeGenderModal);
+        }
     }
+
+    public boolean isElementPresent(By locator) {
+    try {
+        driver.findElement(locator);
+        return true;
+    } catch (NoSuchElementException e) {
+        return false;
+    }
+}
+
+
+
     /*
     public void closeModals() {
         String mainWindowHandle = driver.getWindowHandle();
